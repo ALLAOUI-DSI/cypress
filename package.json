@@ -1,0 +1,14 @@
+{
+  "name": "CypressTutorial",
+  "version": "1.0.0",
+  "description": "h1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serveurLocal" :"serve -l 2021" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

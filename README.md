@@ -8,6 +8,11 @@
   - [Visual Studio Code](#visual-studio-code)
   - [serve](#serve)
 - [Vérification de l'environnement](#vérification-de-lenvironnement)
+- [Tester avec Cypress](#tester-avec-cypress)
+  - [Structure d'un script de test](#structure-dun-script-de-test)
+  - [Structure d'un projet de test](#structure-dun-projet-de-test)
+  - [AAA: Arrange, Act, Assert](#aaa-arrange-act-assert)
+  - [Application du paradigme AAA](#application-du-paradigme-aaa)
 
 # Introduction 
 [Cypress](http://cypress.io) est un outil de test fonctionnel dit End-to-End (e2e). Il permet d'automatiser les taches de manipulation et d'interaction avec l'application WEB. L'objective de ce répertoire et de proposer une introduction à l'outil et les étapes nécessaires pour l'installer et commencer à rédiger et exécuter des scripts de test. 
@@ -17,7 +22,8 @@ Le development des scripts de test pour Cypress demande une connaissance du lang
 # Prérequis
 Les outils suivants sont nécessaires pour se lancer dans Cypress.
 ## NodeJs
-A télécharger depuis [nodejs.org](https://nodejs.org/en/download/). Il est conçu initialement pour exécuter Javascript au niveau du serveur (i.e: serveur WEB JS). On l'utilise ajourd'hui pour exécuter des scripts Javascript et Typescript localement sans besoin d'un navigateur WEB. Vérifier l'installation avec la commande `node -v`.
+A télécharger depuis [nodejs.org](https://nodejs.org/en/download/). Il est conçu initialement pour exécuter Javascript au niveau du serveur (i.e: serveur WEB JS). On l'utilise ajourd'hui pour exécuter des scripts Javascript et Typescript localement sans besoin d'un navigateur WEB. Vérifier l'installation avec la commande\
+ `node -v` \
 ![version node](media/node_version.png).
 
 ## npm
@@ -61,7 +67,7 @@ Cette commande va lancer un script définit dans le fichier `package.json`. Elle
 `serve --port=2021`\
 (Si vous modifiez le port, vous devrez modifier également les liens dans les fichiers de  test `*.spec.js`).\
 Vérifiez le lancement du serveur local en accédant à la page http://localhost:2021/  
-Ensuite, on ajoute une nouvelle fenêtre du terminal pour lancer les scripts de test. Dans la nouveau terminal lancer la commande suivante:\
+Ensuite, on ajoute une nouvelle fenêtre du terminal pour lancer les scripts de test. Dans le nouveau terminal lancer la commande suivante:\
 `npm run cy:open` \
 Cette commande est équivalente à la commande suivante:\
 `cypress open` \
@@ -69,6 +75,62 @@ Depuis l'interface graphique de Cypress lancez l'exécution des tests.\
 ![interface graphique Cypress](media/cypress_window.png) \
 Une nouvelle fenêtre du navigateur va être affichée où les tests serons exécutés.\
 ![résultats des tests Cypress](media/cypress_test_results.png)
+# Tester avec Cypress
+## Structure d'un script de test
+Un fichier de test Cypress est un script JS intitulé par convention `PAGE.spec.js` alors chaque page de l'application WEB on lui associe un script de test. Le script contient un ou plusieurs tests à exécuter. Chaque script est composé d'un objet `context()` qui encapsule tous les tests définis par des fonctions `it()`. Chaque définition de `it()` est un test à exécuter indépendamment d'autre test. Le code suivant représente un exemple basique d'un script de test:\
+````
+context('Description de la suite de tests', () => {
+    it('Description du test 1', () => {
+        // ...
+    }
+    it('Description du test 2', () => {
+        // ...
+    }
+}
+````
+
+## Structure d'un projet de test
+Les fichiers au sien d'un projet Cypress sont organisés suivant la [hiérarchie](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests.html) suivante:
+````
+Intitulé du projet/
+├─ cypress/
+│  ├─ fixtures/
+│  │  ├─ exemple_donnee.json
+│  ├─ integration/
+│  │  ├─ exemple_page_1.spec.js
+│  │  ├─ exemple_page_2.spec.js
+│  ├─ plugins/
+│  ├─ support/
+├─ package.json
+├─ cypress.json
+````
+Le fichier `cypress.json` et le dossier `cypress` sont généré automatiquement après la première execution de la commande `cypress open`. Le fichier `cypress.json` est un fichier de [configuration](https://docs.cypress.io/guides/references/configuration.html) de Cypress, là où on modifie les paramètres d'exécution de Cypress, par exemple le navigateur à utiliser, la taille de la fenêtre du navigateur, la durée de `timeout` par défault, etc. Le code suivant représente un exemple du fichier `cypress.json`.
+````
+{
+	"baseUrl": "http://localhost:1337/",
+	"viewportHeight" : 768,
+	"viewportWidth":1024,
+}
+````
+Le dossier `cypress/integration` est l'emplacement par défault des scripts de test. Tous ces scripts serons affichés dans l'interface graphique de Cypress. Si on lance l'execution avec la commande `cypress run` (qui lance les tests sans passer par l'interface graphique de Cypress) tous les scripts qui se trouve dans ce dossier serons éxecuté automatiquement. Pour exclure un fichier on modifie l'option `ignoreTestFiles` au niveau du fichier `cypress.json`.\
+Le dossier `cypress/fixtures` contient les fichiers de données statiques qui peuvent être utilisés pour alimenter un test. On utilise des fichier `json` qui serons importés en tant qu'objets JS, en utilisant la fonction [`cy.fixture()`](https://docs.cypress.io/api/commands/fixture.html).\
+Les dossiers `cypress/plugins` et `cypress/support` contiennent des fichiers supplémentaires pour une utilisation avancé. Cette partie ne sera pas traitée dans ce support.\
+Il est possible de changer l'emplacement de ces dossiers en modifiant le fichier de configuration. Par exemple, la modification du dossier des tests se fait avec l'option `integrationFolder`:
+````
+{
+    "video": false,
+    "integrationFolder": "dossier-de-test/sous-dossier"
+}
+```` 
+## AAA: Arrange, Act, Assert 
+Un test Cypress peut être divisé en trois phases: Arrange (organiser ou préparer), Act (agir) et Assert (affirmer). Dans la première phase (**Arrange**) on prépare l'état de l'application à tester, par exemple visiter l'adresse de la page et s'authentifier. La deuxième phase (**Act**) consiste à interagir avec la page, comme une saisie ou un clic, c'est une simulation d'un utilisation normale de l'application. La dernière phase (**Assert**) est de verifier que l'état attendu est obtenu, par exemple: vérifier qu'un message d'erreur est affiché lors d'une une saisie erronée.
+
+## Application du paradigme AAA
+Dans le premier test su script [`index.spec.js`](cypress/integration/index.spec.js) la technique AAA est appliquée comme suit:
+- Arrange: visiter la page d'accueil `/`.
+- Act: saisir l'adresse email et clic sur le bouton action.
+- Assert: vérifier que la même adresse est affichée dans la fenêtre modale.
+
 
 
 

@@ -2,11 +2,11 @@
   - [Connaissances essentielles](#connaissances-essentielles)
 - [Prérequis](#prérequis)
   - [NodeJs](#nodejs)
-  - [`npm`](#npm)
+  - [npm](#npm)
   - [Cypress](#cypress)
-  - [`git`](#git)
+  - [git](#git)
   - [Visual Studio Code](#visual-studio-code)
-  - [`serve`](#serve)
+  - [serve](#serve)
 - [Vérification de l'environnement](#vérification-de-lenvironnement)
 
 # Introduction 
@@ -20,7 +20,7 @@ Les outils suivants sont nécessaires pour se lancer dans Cypress.
 A télécharger depuis [nodejs.org](https://nodejs.org/en/download/). Il est conçu initialement pour exécuter Javascript au niveau du serveur (i.e: serveur WEB JS). On l'utilise ajourd'hui pour exécuter des scripts Javascript et Typescript localement sans besoin d'un navigateur WEB. Vérifier l'installation avec la commande `node -v`.
 ![version node](media/node_version.png).
 
-## `npm`
+## npm
 Géstionnaire de dépendances des applications JS. Pour chaque project géré par `npm` on lui attache un fichier `package.json` qui comporte toutes les informations relatives à l'application (version, description, dépendances, commandes à exécuter, [etc.](https://docs.npmjs.com/cli/v7/configuring-npm/package-json)). `npm` est inclus avec Node.  
 Vérifier l'installation avec la commande:\
  `node -v`\
@@ -34,7 +34,7 @@ Outil de test e2e. Permet l'exécution des script de test JS. Il offre une inter
 Vérifier l'installation avec la commande:\
  `cypress -v`\
 ![version cypress](media/cypress_version.png)
-## `git`
+## git
 `git` est un système de gestion de versions. Il permet de suivre l'évolution d'un projet et de restaurer une version précédente du même projet sans perdre l'état actuel. `git` est un outil essentiel pour le development en équipe, où chaque membre reçoit  une copie (via `git clone`) d'un répertoire dit `remote`. La version d'origine du projet est modifiée après un `commit` suivi d'un `push` depuis la version locale.  
 Télécharger et installer `git` depuis [git-scm.com](https://git-scm.com/download). Vérifier l'installation avec la commande:\
 `git --version`\
@@ -43,7 +43,7 @@ Nous allons utiliser `git` pour avoir une copie de ce répertoire.
 ## Visual Studio Code
 VSCode est un environnement de development intégré (IDE) gratuit développé par Microsoft. Voir les extensions conçues pour le development des scripts Cypress, il est recommandé  d'utiliser VSCode au lieu d'un éditeur de texte basique. A télécharger et installer depuis [visualstudio.com](https://code.visualstudio.com/download). Ensuite ajouter depuis l'onglet des extensions [*Cypress Snippets*](https://marketplace.visualstudio.com/items?itemName=andrew-codes.cypress-snippets). Ce dernier va nous permettre d'accélérer le development des scripts Cypress par des raccourcies et la saisie automatique.
 
-## `serve`
+## serve
 `serve` est un utilitaire légère pour la création des serveurs WEB locaux à partir des fichiers source statiques. Ce répertoire contient une page WEB statique  qu'on va utiliser comme sujet de test. `serve` va nous permettre de lancer un serveur local sur l'adresse `http://localhost:PORT/`. Cypress va naviguer vers cette adresse pour effectuer les tests proposés. Commande d'installation :\
 `npm i serve -g`\
 Vérifier l'installation par la commande:\

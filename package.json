@@ -4,11 +4,13 @@
   "description": "h1",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serveurLocal" :"serve -l 2021" 
+    "local": "serve -l 2021",
+    "cy:open": "cypress open"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "cypress": "^6.5.0"
+  }
 }

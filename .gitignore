@@ -5,3 +5,4 @@ node_modules/
 markdown-cheat-sheet.md
 
 cypress/videos
+cypress/integration/scraps.spec.js

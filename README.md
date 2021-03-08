@@ -13,6 +13,16 @@
   - [Structure d'un projet de test](#structure-dun-projet-de-test)
   - [AAA: Arrange, Act, Assert](#aaa-arrange-act-assert)
   - [Application du paradigme AAA](#application-du-paradigme-aaa)
+- [Cas d'utilisation](#cas-dutilisation)
+  - [Arrange](#arrange)
+    - [Visiter une page](#visiter-une-page)
+    - [Exécuter une requête HTTP](#exécuter-une-requête-http)
+    - [Hooks](#hooks)
+    - [`get` et `$`](#get-et-)
+    - [Naviguer dans le DOM](#naviguer-dans-le-dom)
+    - [Modifier les cookies](#modifier-les-cookies)
+    - [Importer JSON via `fixture`](#importer-json-via-fixture)
+  - [Act](#act)
 
 # Introduction 
 [Cypress](http://cypress.io) est un outil de test fonctionnel dit End-to-End (e2e). Il permet d'automatiser les taches de manipulation et d'interaction avec l'application WEB. L'objective de ce répertoire et de proposer une introduction à l'outil et les étapes nécessaires pour l'installer et commencer à rédiger et exécuter des scripts de test. 
@@ -78,7 +88,7 @@ Une nouvelle fenêtre du navigateur va être affichée où les tests serons exé
 # Tester avec Cypress
 ## Structure d'un script de test
 Un fichier de test Cypress est un script JS intitulé par convention `PAGE.spec.js` alors chaque page de l'application WEB on lui associe un script de test. Le script contient un ou plusieurs tests à exécuter. Chaque script est composé d'un objet `context()` qui encapsule tous les tests définis par des fonctions `it()`. Chaque définition de `it()` est un test à exécuter indépendamment d'autre test. Le code suivant représente un exemple basique d'un script de test:\
-````
+```javascript
 context('Description de la suite de tests', () => {
     it('Description du test 1', () => {
         // ...
@@ -87,11 +97,11 @@ context('Description de la suite de tests', () => {
         // ...
     }
 }
-````
+```
 
 ## Structure d'un projet de test
 Les fichiers au sien d'un projet Cypress sont organisés suivant la [hiérarchie](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests.html) suivante:
-````
+```
 Intitulé du projet/
 ├─ cypress/
 │  ├─ fixtures/
@@ -103,25 +113,25 @@ Intitulé du projet/
 │  ├─ support/
 ├─ package.json
 ├─ cypress.json
-````
+```
 Le fichier `cypress.json` et le dossier `cypress` sont généré automatiquement après la première execution de la commande `cypress open`. Le fichier `cypress.json` est un fichier de [configuration](https://docs.cypress.io/guides/references/configuration.html) de Cypress, là où on modifie les paramètres d'exécution de Cypress, par exemple le navigateur à utiliser, la taille de la fenêtre du navigateur, la durée de `timeout` par défault, etc. Le code suivant représente un exemple du fichier `cypress.json`.
-````
+```json
 {
 	"baseUrl": "http://localhost:1337/",
 	"viewportHeight" : 768,
 	"viewportWidth":1024,
 }
-````
+```
 Le dossier `cypress/integration` est l'emplacement par défault des scripts de test. Tous ces scripts serons affichés dans l'interface graphique de Cypress. Si on lance l'execution avec la commande `cypress run` (qui lance les tests sans passer par l'interface graphique de Cypress) tous les scripts qui se trouve dans ce dossier serons éxecuté automatiquement. Pour exclure un fichier on modifie l'option `ignoreTestFiles` au niveau du fichier `cypress.json`.\
 Le dossier `cypress/fixtures` contient les fichiers de données statiques qui peuvent être utilisés pour alimenter un test. On utilise des fichier `json` qui serons importés en tant qu'objets JS, en utilisant la fonction [`cy.fixture()`](https://docs.cypress.io/api/commands/fixture.html).\
 Les dossiers `cypress/plugins` et `cypress/support` contiennent des fichiers supplémentaires pour une utilisation avancé. Cette partie ne sera pas traitée dans ce support.\
 Il est possible de changer l'emplacement de ces dossiers en modifiant le fichier de configuration. Par exemple, la modification du dossier des tests se fait avec l'option `integrationFolder`:
-````
+```json
 {
     "video": false,
     "integrationFolder": "dossier-de-test/sous-dossier"
 }
-```` 
+```
 ## AAA: Arrange, Act, Assert 
 Un test Cypress peut être divisé en trois phases: Arrange (organiser ou préparer), Act (agir) et Assert (affirmer). Dans la première phase (**Arrange**) on prépare l'état de l'application à tester, par exemple visiter l'adresse de la page et s'authentifier. La deuxième phase (**Act**) consiste à interagir avec la page, comme une saisie ou un clic, c'est une simulation d'un utilisation normale de l'application. La dernière phase (**Assert**) est de verifier que l'état attendu est obtenu, par exemple: vérifier qu'un message d'erreur est affiché lors d'une une saisie erronée.
 
@@ -131,8 +141,132 @@ Dans le premier test su script [`index.spec.js`](cypress/integration/index.spec.
 - Act: saisir l'adresse email et clic sur le bouton action.
 - Assert: vérifier que la même adresse est affichée dans la fenêtre modale.
 
+# Cas d'utilisation
+Dans cette section nous allons aborder des cas d'utilisation dans chaque phase de test. A chaque phase des cas pratiques  TODO...
+<!-- TODO : Complete this -->
 
+## Arrange
+### Visiter une page
+L'accès à une page WEB se fait par la fonction `cy.visit(URL)`. Exemple: `cy.visite('https://www.google.com/')`. Si on a précisé une URL racine de l'application dans le fichier de configuration:
+```json
+{
+    "baseUrl": "https://www.google.com"
+}
+```
+On peut alors accéder à une page en utilisant un chemin relatif: `cy.visit('/maps')`. Ceci est équivalant à la l'instruction `cy.visite('https://www.google.com/maps')`. L'avantage de ce choix est la possibilité de changer la racine de l'application à partir d'un seul point, au lieu d'aller modifier tous les fichiers de tests.
+### Exécuter une requête HTTP
+Des fois on a besoin d'effectuer des requêtes de type POST, GET ou autres. Comme par exemple s'authentifier avant d'acceder à l'application. Cypress propose l'instruction [`request`](https://docs.cypress.io/api/commands/request.html) qui lance une connexion asynchrone à un serveur distant. 
+```javascript
+cy
+.request('POST', '/login', { username: 'Flan1337', password:'s3cr3t' })
+  .then((response) => {
+    // Traitement ...
+  }) 
+``` 
+### Hooks
+Si une request doit être exécutée avant chaque test, il est donc possible d'implémenter une fonction de type [Hooks](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests.html#Hooks). Parmi ces fonctions on trouve `before`, `beforeEach`, `after`, `afterEach`. Ces fonctions sont appelées automatiquement par Cypress selon le tableau suivant:
 
+|Hook | Description|  
+|-----|-------|
+|`before` | Exécutée une seule fois avant l'éxecution du premier test|
+|`after` |  Exécutée une seule fois après l'éxecution de dernier test|
+|`beforeEach` | Exécutée avant chaque test du même bloc|
+|`afterEach` | Exécutée après chaque test du même bloc|
+
+Exemple d'execution:
+``` javascript
+before({...})
+
+beforeEach({...})
+it('test1',{...})
+afterEach({...})
+
+beforeEach({...})
+it('test2',{...})
+afterEach({...})
+
+after({...})
+```
+
+### `get` et `$`
+`cy.get(SELECTOR)` et `$(SELECTOR)` sont utilisées pour pointer sur un élément du DOM.`get` est plus général que `$`, cette dernière est limitée au `selector` connu par `jQuery`. `SELECTOR` est une expression de type `jQuery selector` qui décrit comment acceder à l'element. 
+```javascript
+cy.get('button') // tous les elements de type button
+cy.get('#info') // l'element avec l'id info
+cy.get('.clsActive') // tous les elements avec la classe clsActive
+// etc...
+```
+Voir la [documentation](https://docs.cypress.io/api/commands/get.html) pour plus de details.
+
+### Naviguer dans le DOM
+Parfois l'accès direct à un element n'est pas possible, pour cela on utilise des méthodes qui permettent de localiser un elément à partir d'un autre.\
+**find:** trouver un elément au sein d'un autre
+```javascript
+// trouver les boutons avec la classe send qui se trouve à l'intérieur de l'element avec l'id formCompte.
+
+cy.get('#formCompte').find('button.send') 
+
+``` 
+**parent:** accèder au parent de l'elèment.
+```javascript
+cy.get('li.active').parent()
+```
+**parents:** accèder à la liste des parents de l'elèment
+```javascript
+cy.get('footer').parents()
+```
+Il exist d'autre [fonctions](https://docs.cypress.io/api/api/table-of-contents.html) de la même nature: **next**, **prev**, etc. 
+
+### Modifier les cookies
+La manipulation des cookies est effectuée par les méthodes `getCookies` (retourner la list de tous les cookies), `getCookie` (retourner une cookie identifiée par son nom) et `setCookie` (enregistrer une nouvelle cookie).
+```javascript
+cy.setCookie('session', 'SGkgdGhlcmUgOik=') 
+``` 
+
+### Importer JSON via `fixture`
+La fonction `fixture` de Cypress permet de lire un fichier de type `json` depuis le dossier `cypress/fixtures` et l'importer son contenu au bloc du test.
+
+Le fichier `cypress/fixtures/user.json` :
+```json
+{
+  "username":"flan1337",
+  "password":"s3cre3t"
+}
+```
+
+```javascript
+context('importer json via fixture',{
+  let user
+  
+  before(()=>{
+    cy.fixture('user.json').then((u)=>{
+      user = u
+    })
+  })
+
+  it('remplir à partir du contenu du json',{
+    cy.visit('/login')
+    cy.get('input#username').input(user.username)
+    cy.get('input#password').input(user.password)
+  })
+})
+```
+
+## Act
+Cypress propose plusieurs méthodes d'interaction avec l'application WEB. clic, saisie, etc.\
+**Clic sur un bouton**
+```javascript
+cy.get('#btnSend').click() 
+``` 
+
+**Vider un champ de text**
+```javascript
+cy.get('[formcontrolname="email"]').clear()
+```
+**Saisir dans un champ de text**
+```javascript
+cy.get('[formcontrolname="address"]').type('19 rue Chaabi')
+```
 
 
 

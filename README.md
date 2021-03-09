@@ -10,6 +10,7 @@
 - [Vérification de l'environnement](#vérification-de-lenvironnement)
 - [Tester avec Cypress](#tester-avec-cypress)
   - [Structure d'un script de test](#structure-dun-script-de-test)
+  - [`only` et `skip`](#only-et-skip)
   - [Structure d'un projet de test](#structure-dun-projet-de-test)
   - [AAA: Arrange, Act, Assert](#aaa-arrange-act-assert)
   - [Application du paradigme AAA](#application-du-paradigme-aaa)
@@ -76,7 +77,7 @@ Attention au dossier du travail. La commande précédente doit être exécutée 
 Cette commande va lancer un script définit dans le fichier `package.json`. Elle est équivalente à la commande suivante:\
 `serve --port=2021`\
 (Si vous modifiez le port, vous devrez modifier également les liens dans les fichiers de  test `*.spec.js`).\
-Vérifiez le lancement du serveur local en accédant à la page http://localhost:2021/  
+Vérifiez le démarrage du serveur local en accédant à la page http://localhost:2021/  
 Ensuite, on ajoute une nouvelle fenêtre du terminal pour lancer les scripts de test. Dans le nouveau terminal lancer la commande suivante:\
 `npm run cy:open` \
 Cette commande est équivalente à la commande suivante:\
@@ -97,6 +98,26 @@ context('Description de la suite de tests', () => {
         // ...
     }
 }
+```
+
+## `only` et `skip`
+Si la suite de tests contient plusieurs tests (plusieurs fonctions `it`), il est souvent intéressant -surtout dans la phase du développement des tests- d'avoir un mécanisme de control des tests. Par défault, tous les tests sont exécutés sans exception. Le rôle de `only` est de limiter l'exécution à ce test. Dans l'exemple suivant, seulement le test nommé 'test 1' sera exécuté.
+```javascript
+it.only('test 1 ', {
+  //...
+})
+it('test 2', {
+  //....
+})
+```
+`skip` est utilisé pour sauter un test. Dans l'exemple suivant le test nommé 'test 2' ne sera pas exécuté.
+```javascript
+it('test 1 ', {
+  //...
+})
+it.skip('test 2', {
+  //....
+})
 ```
 
 ## Structure d'un projet de test
@@ -207,15 +228,15 @@ Parfois l'accès direct à un element n'est pas possible, pour cela on utilise d
 cy.get('#formCompte').find('button.send') 
 
 ``` 
-**parent:** accèder au parent de l'elèment.
+`parent`: accèder au parent de l'elèment.
 ```javascript
 cy.get('li.active').parent()
 ```
-**parents:** accèder à la liste des parents de l'elèment
+`parents`: accèder à la liste des parents de l'elèment
 ```javascript
 cy.get('footer').parents()
 ```
-Il exist d'autre [fonctions](https://docs.cypress.io/api/api/table-of-contents.html) de la même nature: **next**, **prev**, etc. 
+Il exist d'autre [fonctions](https://docs.cypress.io/api/api/table-of-contents.html) de la même nature: `next`, `prev`, etc. 
 
 ### Modifier les cookies
 La manipulation des cookies est effectuée par les méthodes `getCookies` (retourner la list de tous les cookies), `getCookie` (retourner une cookie identifiée par son nom) et `setCookie` (enregistrer une nouvelle cookie).
@@ -224,7 +245,7 @@ cy.setCookie('session', 'SGkgdGhlcmUgOik=')
 ``` 
 
 ### Importer JSON via `fixture`
-La fonction `fixture` de Cypress permet de lire un fichier de type `json` depuis le dossier `cypress/fixtures` et l'importer son contenu au bloc du test.
+La fonction `fixture` de Cypress permet de lire un fichier de type `json` depuis le dossier `cypress/fixtures` et d'importer son contenu au bloc de test.
 
 Le fichier `cypress/fixtures/user.json` :
 ```json
